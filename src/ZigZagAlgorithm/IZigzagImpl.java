@@ -5,7 +5,7 @@ import java.util.List;
 
 public class IZigzagImpl implements IZigzag {
 
-	public List<Double> extremumsFinder(int size, List<Double> values){
+	public List<Double> extremumsFinder(int size, List<Double> values, double percentage){
 		// Empty vector to store points of 
 		// local maxima and minima 
 		ArrayList<Double> mx = new ArrayList<Double>(); 
@@ -32,13 +32,17 @@ public class IZigzagImpl implements IZigzag {
 		   // Condition for local minima 
 		   if ((values.get(i - 1) > values.get(i)) && (values.get(i) < values.get(i + 1))) {
 		       mn.add(values.get(i)); 
+		       
+		       if(this.isTrueExtrema(values.get(i - 1), values.get(i), percentage))
 		   	   extremus.add(values.get(i));
 		   	   
 		   }
 		   // Condition for local maxima 
 		   else if ((values.get(i - 1) < values.get(i)) && (values.get(i) > values.get(i + 1))) {
 			   mx.add(values.get(i)); 
-		   	   extremus.add(values.get(i));
+			   
+			   if(this.isTrueExtrema(values.get(i - 1), values.get(i), percentage))
+			   	   extremus.add(values.get(i));
 		   }
 		      
 		   		
@@ -117,5 +121,25 @@ public class IZigzagImpl implements IZigzag {
 
 		return filtred;
 	}
+	
+	
+	public boolean isTrueExtrema(double previous, double current, double percentage) {
+		
+		double diff, diffPercentage;
+		
+			//calculate the diff between two points
+			diff = Math.abs(current - previous);
+			
+			//percentage of the diff beased on the previous point
+			diffPercentage = diff / previous;
+			 
+			if(diffPercentage > percentage) return true;
+			else return false;
+				
+			
+		}
 
+	
 }
+
+

@@ -21,14 +21,11 @@ public class Main {
 		
 		
 		//get extremums from the list
-		List<Double> extremums = z.extremumsFinder(list.size(), list);
-		
-		//filter the extremums based on the deviation percentage = 20%
-		filtred = z.extremasFilter(extremums, 0.20);
+		List<Double> filtred1 = z.extremumsFinder(list.size(), list, 0.20);
 		
 		
 		System.out.println("zigzag: ");
-		for(double i: filtred) {
+		for(double i: filtred1) {
 			System.out.println(i);
 		}
 	}
