@@ -9,6 +9,10 @@ public interface IZigzag2<T> {
 
 	public boolean isTrueExtremum(double previous, double current , double percentage);
 	
-	public List<T> extremumsFinder(Long size, double percentage);
-
+	public List<T> extremumsFinder(double percentage);
+	
+	
+	
+	public double  calculateVolume(List<T> tracks);
+	public List<Track> filter(List<Track> tracks);
 }

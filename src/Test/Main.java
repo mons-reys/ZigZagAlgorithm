@@ -15,6 +15,8 @@ public class Main {
 		List<Double> list = new ArrayList<Double>();
 		List<Double> filtred =  new ArrayList<Double>();
 		
+		list.add
+		
 		for(double i: arr) {
 			list.add(i);
 		}
