@@ -8,28 +8,23 @@ import ZigZagAlgorithm.IZigzagImpl;
 public class Main {
 
 	public static void main(String[] args) {
-		IZigzagImpl z = new IZigzagImpl();
+		//IZigzagImpl z = new IZigzagImpl();
 		
-		double arr[] = { 10, 20, 15,17,16, 30, 14, 40, 12};
+		int ar[] = new int[11];
 		
-		List<Double> list = new ArrayList<Double>();
-		List<Double> filtred =  new ArrayList<Double>();
 		
-		list.add
 		
-		for(double i: arr) {
-			list.add(i);
+		for(int i = 0; i < 10; i++) {
+			if(i == 3) i += 2;
+			ar[i] = i;
 		}
 		
 		
-		//get extremums from the list
-		List<Double> filtred1 = z.extremumsFinder(list.size(), list, 0.20);
-		
-		
-		System.out.println("zigzag: ");
-		for(double i: filtred1) {
+		for(int i: ar) {
 			System.out.println(i);
 		}
+		
+		
 	}
 
 }

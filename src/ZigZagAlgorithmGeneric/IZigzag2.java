@@ -12,6 +12,7 @@ public interface IZigzag2<T> {
 	public List<T> extremumsFinder(double percentage);
 	
 	
+	public boolean isAnomaly(Track previous, Track current, Track next, Long differenceOfMinutes, double percentage);	
 	
 	public double  calculateVolume(List<T> tracks);
 	public List<Track> filter(List<Track> tracks);

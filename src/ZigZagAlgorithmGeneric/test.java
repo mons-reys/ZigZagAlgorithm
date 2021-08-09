@@ -36,7 +36,7 @@ public class test {
 		List<Track> rande = new ArrayList<Track>();
 
 		
-		for(int i = 0; i < 2000; i++) {
+		for(int i = 0; i < 100000; i++) {
 			double randomNum = rand.nextInt((5 - 0) + 1) + 0;
 			
 			double randomNum2 = rand.nextInt((100 - 0) + 1) + 0;
