@@ -47,57 +47,9 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 		//check the points 
 		for(int i = 1; i < size - 1; i++) {
 			
-			
-			
-			
-			
-			if((i+2 < size - 1)) {
-				
-				if(this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), (long) 3, percentage) ) System.out.println("check anomaly true :" + i ); 
-				else System.out.println("anomaly false :" + i );
-				
-				
-				//detect the anomly 
-				if(this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), (long) 3, percentage)) {
-					//we add the 3 points to the anomalies list
-					anomalies.add(tracks.get(i));
-					anomalies.add(tracks.get(i + 1));
-					anomalies.add(tracks.get(i + 2));
-					
-					System.out.println("i am at the point : " + tracks.get(i).getVolume() + "index : " + (i +2));
-
-					
-					//we skip 2 tracks;
-					//System.out.println("skipped as anomaly: " + tracks.get(i).getVolume() + " : " + tracks.get(i).getType() + " AND " + tracks.get(i  +1 ).getVolume() + " : " + tracks.get(i +1 ).getType() + " AND " + tracks.get(i + 2).getVolume() + " : " + tracks.get(i + 2).getType());
-					 i += 1;
-					 
-				}else {
-					//check if true extremum
-					if(this.isTrueExtremum((double) tracks.get(i - 1).getVolume(),  (double) tracks.get(i).getVolume(), percentage)) {
-						
-						
-						
-						//check if a max or min 
-						boolean isMax = this.isMaximum((double) tracks.get(i - 1).getVolume(),  (double) tracks.get(i).getVolume() ,  (double) tracks.get(i + 1).getVolume());
-						boolean isMin = this.isMinimum((double) tracks.get(i - 1).getVolume(),  (double) tracks.get(i).getVolume() ,  (double) tracks.get(i + 1).getVolume());
-						
-						if(isMax){
-							//set the type as max
-							tracks.get(i).setType(TrackType.max);
-							extremums.add(tracks.get(i));
-						}else if(isMin) {
-							//set the type as min
-							tracks.get(i).setType(TrackType.min);
-							extremums.add(tracks.get(i));
-						}
-					}
-				}
-			
-			}else {
-			
+			if(!(i+2 < size - 1) || ! this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), (long) 3, percentage) ) {
 				//check if true extremum
 				if(this.isTrueExtremum((double) tracks.get(i - 1).getVolume(),  (double) tracks.get(i).getVolume(), percentage)) {
-					
 					
 					//check if a max or min 
 					boolean isMax = this.isMaximum((double) tracks.get(i - 1).getVolume(),  (double) tracks.get(i).getVolume() ,  (double) tracks.get(i + 1).getVolume());
@@ -113,13 +65,30 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 						extremums.add(tracks.get(i));
 					}
 				}
-				
+			
+			
+			}else {
+			
+				//detect the anomly 
+				if(this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), (long) 3, percentage)) {
+					//we add the 3 points to the anomalies list
+					anomalies.add(tracks.get(i));
+					anomalies.add(tracks.get(i + 1));
+					anomalies.add(tracks.get(i + 2));
+					
+					System.out.println("i am at the point : " + tracks.get(i).getVolume() + "index : " + (i +2));
+
+					
+					//we skip 2 tracks;
+					//System.out.println("skipped as anomaly: " + tracks.get(i).getVolume() + " : " + tracks.get(i).getType() + " AND " + tracks.get(i  +1 ).getVolume() + " : " + tracks.get(i +1 ).getType() + " AND " + tracks.get(i + 2).getVolume() + " : " + tracks.get(i + 2).getType());
+					 i += 1;
 			}
 			
 			
 			
 			
 		}
+	}
 		
 		
 		
