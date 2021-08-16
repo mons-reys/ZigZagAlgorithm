@@ -2,10 +2,14 @@ package ZigZagAlgorithmGeneric;
 
 import java.util.Date;
 
-public class Track extends ITrack<Double, Double> {
+public class Track extends ITrack<Date, Double> {
 
-	public Track(Double time, Double volume) {
+	public Track(Date time, Double volume) {
 		super(time, volume);
+	}
+	
+	public Track() {
+		
 	}
 		
 }

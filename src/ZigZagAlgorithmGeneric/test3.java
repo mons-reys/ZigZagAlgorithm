@@ -1,57 +1,55 @@
 package ZigZagAlgorithmGeneric;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class test3 {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
-	public static void main(String[] args) {
-		List<Track> tracks = new ArrayList<Track>();
+
+
+public class test3 {
+	
+	public static void main(String[] args) throws IOException, ParseException {
 		List<Track> result = new ArrayList<Track>();
 		
-		
-		
-		//double arr[] = {70,65,70,55,60,45,50,35,90,55,60,10,12,45,80,75,77,45};
-		double arr[] = {70, 90, 12, 87, 50};
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
-		tracks.add(new Track(5.00, 70.00));
-		tracks.add(new Track(10.00, 90.00));
-		tracks.add(new Track(11.00, 12.00));
-		tracks.add(new Track(12.00, 87.00));
-		tracks.add(new Track(19.00, 14.00));
-		tracks.add(new Track(19.00, 30.00));
-		tracks.add(new Track(19.00, 15.00));
-		tracks.add(new Track(20.00, 50.00));
-
-		
+		ArrayList<Track> list = mapper.readValue(Paths.get("Data.json").toFile(), mapper.getTypeFactory().constructCollectionType(List.class, Track.class));
 		
 		
 
-		ZigZagImpl2 algo = new ZigZagImpl2(tracks);
+		ZigZagImpl2 algo = new ZigZagImpl2(list);
 
-		for(Track i: tracks) {
-			System.out.print(i.getVolume() + " : " + i.getType() + " \t");
+		
+		
+		result = algo.extremumsFinder(0.50);
+		
+		
+		System.out.println(algo.calculateVolume(result));
+		
+		
+		System.out.println("size: " + list.size());
+
+		
+		for(Track i : result) {
+			System.out.println("Track: " +  " volume : " + i.getVolume()  + " date : " + i.getTime() + " --- type:  ---" + i.getType());
 		}
+
+
 		
-		
-		result = algo.extremumsFinder(0.20);
-		
-		
-		
-		
-		System.out.println("zigzag: ");
-		
-		for(Track i: result) {
-			System.out.print(i.getVolume() + " : " + i.getType() + " \t");
-		}
-		
-		
-		System.out.println(" ");
-		
-		System.out.println("the size of the input: " + tracks.size() );
-		System.out.println("the size of the result: " + result.size() );
-		
-		System.out.println("the final volume: " + algo.calculateVolume(result));
 
 	}
 

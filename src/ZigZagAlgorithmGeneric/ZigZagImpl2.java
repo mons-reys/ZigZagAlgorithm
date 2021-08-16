@@ -1,16 +1,16 @@
 package ZigZagAlgorithmGeneric;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ZigZagImpl2 implements IZigzag2<Track>{
 	
 	List<Track> tracks;
 	Long size;
-	
-	
 	
 
 	public ZigZagImpl2(List<Track> tracks) {
@@ -20,7 +20,7 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 
 
 
-	public List<Track> extremumsFinder(double percentage) {
+	public List<Track> extremumsFinder(double percentage) throws ParseException {
 		
 		List<Track> extremums = new ArrayList<Track>();
 		List<Track> FiltredExtremums = new ArrayList<Track>();
@@ -47,7 +47,7 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 		//check the points 
 		for(int i = 1; i < size - 1; i++) {
 			
-			if(!(i+2 < size - 1) || ! this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), (long) 3, percentage) ) {
+			//if(!(i+2 < size - 1) || ! this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), (long) 1, percentage) ) {
 				//check if true extremum
 				if(this.isTrueExtremum((double) tracks.get(i - 1).getVolume(),  (double) tracks.get(i).getVolume(), percentage)) {
 					
@@ -63,11 +63,13 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 						//set the type as min
 						tracks.get(i).setType(TrackType.min);
 						extremums.add(tracks.get(i));
+					}else {
+						System.out.println("skipped : " + tracks.get(i).getVolume() + " date : " + tracks.get(i).getTime());
 					}
-				}
+				//}
 			
 			
-			}else {
+			/*}else {
 			
 				//detect the anomly 
 				if(this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), (long) 3, percentage)) {
@@ -82,7 +84,7 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 					//we skip 2 tracks;
 					//System.out.println("skipped as anomaly: " + tracks.get(i).getVolume() + " : " + tracks.get(i).getType() + " AND " + tracks.get(i  +1 ).getVolume() + " : " + tracks.get(i +1 ).getType() + " AND " + tracks.get(i + 2).getVolume() + " : " + tracks.get(i + 2).getType());
 					 i += 1;
-			}
+			}*/
 			
 			
 			
@@ -178,17 +180,32 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 	 * if it's the case we return an anomaly
 	 * */
 	
-	public boolean isAnomaly(Track current, Track next1, Track next2, Long differenceOfMinutes, double percentage) {
+	public boolean isAnomaly(Track current, Track next1, Track next2, Long differenceOfMinutes, double percentage) throws ParseException {
 		//-------calculate the time between two tracks--------
 		
+		 // SimpleDateFormat converts the
+        // string format to date object
+		long duration  = current.getTime().getTime() - next2.getTime().getTime();
+
+		
+		double differenceInMinutes = Math.abs(TimeUnit.MILLISECONDS.toMinutes(duration));
+
+		//System.out.println("diff: " + differenceInMinutes);
+
+        // Calucalte time difference
+        // in milliseconds
+        //double differenceInMilliSeconds
+        //    = Math.abs(d2.getTime() - d1.getTime());
+        
+        
         // Calculating the difference in milliseconds
-        double differenceInMilliSeconds
-            = Math.abs(current.getTime() - next2.getTime());
+       // double differenceInMilliSeconds
+        //    = Math.abs(current.getTime() - next2.getTime());
   
   
         // Calculating the difference in Minutes
-        double differenceInMinutes
-            = (differenceInMilliSeconds / (60 * 1000)) % 60;
+       // double differenceInMinutes
+       //     = (differenceInMilliSeconds / (60 * 1000)) % 60;
   
 		//-------calculate the time between two tracks--------
 

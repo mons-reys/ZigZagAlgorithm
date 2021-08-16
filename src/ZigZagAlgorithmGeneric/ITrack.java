@@ -1,11 +1,18 @@
 package ZigZagAlgorithmGeneric;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 public class ITrack<T, V> {
+	@JsonDeserialize(using = DateHandler.class)
 	private T time;
 	private V volume;
 	private TrackType type;
 	
 	
+	
+public ITrack() {
+		
+	}
 
 
 
