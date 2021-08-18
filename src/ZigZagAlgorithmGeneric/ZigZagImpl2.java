@@ -14,8 +14,11 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 	
 
 	public ZigZagImpl2(List<Track> tracks) {
-		this.tracks = tracks;
-		this.size = (long) tracks.size();
+
+		
+		this.tracks = this.StableValuesFilter(tracks);
+		this.size = (long) this.tracks.size();
+		System.out.println("size od: " + size);
 	}
 
 
@@ -45,12 +48,16 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 		
 		
 		//check the points 
-		for(int i = 1; i < size - 1; i++) {
-			
-			//if(!(i+2 < size - 1) || ! this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), (long) 1, percentage) ) {
+		for(int i = 1; i < this.size - 1; i++) {
+			boolean v =(this.isAnomaly(tracks.get(0), tracks.get(1), tracks.get(2), (long) 300, percentage));
+
+			if(!(i+2 < size - 1) && ! this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), (long) 1, percentage) ) {
 				//check if true extremum
-				if(this.isTrueExtremum((double) tracks.get(i - 1).getVolume(),  (double) tracks.get(i).getVolume(), percentage)) {
-					
+			double val = (double) tracks.get(i).getVolume();
+			
+				boolean percentageCheckTrue = this.isTrueExtremum((double) extremums.get(extremums.size() - 1).getVolume(),  (double) tracks.get(i).getVolume(), percentage);
+			
+				if(percentageCheckTrue) {
 					//check if a max or min 
 					boolean isMax = this.isMaximum((double) tracks.get(i - 1).getVolume(),  (double) tracks.get(i).getVolume() ,  (double) tracks.get(i + 1).getVolume());
 					boolean isMin = this.isMinimum((double) tracks.get(i - 1).getVolume(),  (double) tracks.get(i).getVolume() ,  (double) tracks.get(i + 1).getVolume());
@@ -66,13 +73,24 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 					}else {
 						System.out.println("skipped : " + tracks.get(i).getVolume() + " date : " + tracks.get(i).getTime());
 					}
-				//}
+				}else {
+					if(((double) extremums.get(extremums.size() - 1).getVolume() < (double) tracks.get(i).getVolume()) &&  extremums.get(extremums.size() - 1).getType() == (TrackType.max)) {
+						//set the type as max
+						tracks.get(i).setType(TrackType.max);
+						extremums.add(tracks.get(i));
+					}else if(((double) extremums.get(extremums.size() - 1).getVolume() > (double) tracks.get(i).getVolume()) &&  extremums.get(extremums.size() - 1).getType() == (TrackType.min)) {
+						//set the type as min
+						tracks.get(i).setType(TrackType.min);
+						extremums.add(tracks.get(i));
+					}
+				}
 			
-			
-			/*}else {
+				
+				
+			}else {
 			
 				//detect the anomly 
-				if(this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), (long) 3, percentage)) {
+				if(this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), (long) 360, percentage)) {
 					//we add the 3 points to the anomalies list
 					anomalies.add(tracks.get(i));
 					anomalies.add(tracks.get(i + 1));
@@ -84,12 +102,10 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 					//we skip 2 tracks;
 					//System.out.println("skipped as anomaly: " + tracks.get(i).getVolume() + " : " + tracks.get(i).getType() + " AND " + tracks.get(i  +1 ).getVolume() + " : " + tracks.get(i +1 ).getType() + " AND " + tracks.get(i + 2).getVolume() + " : " + tracks.get(i + 2).getType());
 					 i += 1;
-			}*/
+			}
 			
-			
-			
-			
-		}
+			}
+		
 	}
 		
 		
@@ -107,8 +123,9 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 		//filter the extremums
 		FiltredExtremums = this.filter(extremums);
 		
+	
 		
-		return FiltredExtremums;
+		return 		FiltredExtremums;
 	}
 
 	
@@ -153,7 +170,8 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 	public List<Track> filter(List<Track> tracks){
 		List<Track> newItems = new ArrayList<Track>();
 
-		for(int i = 0; i< tracks.size();)
+		newItems.add(tracks.get(0));
+		for(int i = 1; i< tracks.size();)
 		{
 		    Track pick = tracks.get(i);
 		    for(i += 1; i < tracks.size() && pick.getType() == tracks.get(i).getType(); i++)
@@ -168,6 +186,35 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 		return newItems;
 		
 	}
+	
+	
+	
+	//method to filter stable values and replace them with one value
+	public List<Track> StableValuesFilter(List<Track> tracks){
+		
+		List<Track> newItems = new ArrayList<Track>();
+
+		for(int i = 0; i< tracks.size();)
+		{
+			
+			Track pick = tracks.get(i);
+
+		    for(i += 1; i < tracks.size() && pick.getVolume().equals(tracks.get(i).getVolume()); i++)
+		    {
+		        if((pick.getVolume() != tracks.get(i).getVolume()))
+		            pick = tracks.get(i);
+		    }
+		    newItems.add(pick);
+		}
+        
+		
+
+		return newItems;
+	}
+	
+	
+	
+
 	
 	//anomaly detector
 	
@@ -189,8 +236,10 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 
 		
 		double differenceInMinutes = Math.abs(TimeUnit.MILLISECONDS.toMinutes(duration));
+		
+		
 
-		//System.out.println("diff: " + differenceInMinutes);
+		System.out.println("diff: " + differenceInMinutes);
 
         // Calucalte time difference
         // in milliseconds
@@ -216,10 +265,11 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 			
 			if(! percentageBetweenPreviousAndNext){
 				//must be greater than the percentage in the param
-				boolean percentageBetweenPreviousAndCurrent = this.isTrueExtremum(current.getVolume(), next1.getVolume(), percentage);
-				boolean percentageBetweenCurrentAndNext = this.isTrueExtremum(next1.getVolume(), next2.getVolume(), percentage);
+				boolean percentageBetweenCurrentAndNext1 = this.isTrueExtremum(current.getVolume(), next1.getVolume(), percentage);
+				boolean percentageBetweenNext1AndNext2 = this.isTrueExtremum(next1.getVolume(), next2.getVolume(), percentage);
 
-				if(percentageBetweenPreviousAndCurrent && percentageBetweenCurrentAndNext) return true; 
+				boolean c = percentageBetweenCurrentAndNext1 && percentageBetweenNext1AndNext2;
+				if(percentageBetweenCurrentAndNext1 && percentageBetweenNext1AndNext2) return true; 
 				else return false;
 			}
 		}
@@ -241,8 +291,13 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 		
 		double vol = tracks.get(0).getVolume() - tracks.get(tracks.size() - 1).getVolume();
 		
-		if(tracks.get(0).getType() == TrackType.min) firstMinIndex = 0;
-		else firstMinIndex = 1;
+		if(tracks.get(0).getType() == TrackType.min) {
+			if(tracks.get(1).getType()== tracks.get(0).getType()) firstMinIndex = 1;
+			else firstMinIndex = 2;
+		}else firstMinIndex = 0;
+			
+			
+		
 		
 		for(int i = firstMinIndex; i < tracks.size() - 1; i+=2) {
 			vol += Math.abs(tracks.get(i).getVolume() - tracks.get(i + 1).getVolume());

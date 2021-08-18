@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,31 +17,62 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ZigZagAlgorithmGeneric.Tra;
 import ZigZagAlgorithmGeneric.Track;
+import ZigZagAlgorithmGeneric.TrackType;
+import ZigZagAlgorithmGeneric.item;
 
 
 
 public class Test {
+	
+	
+	public static List<Double> filter(List<Double> tracks){
+		
+		List<Double> newItems = new ArrayList<Double>();
+
+		for(int i = 0; i< tracks.size();)
+		{
+			
+			Double pick = tracks.get(i);
+	    	System.out.println("val :" + pick);
+
+		    for(i += 1; i < tracks.size() && pick.equals(tracks.get(i)); i++)
+		    {
+		    	System.out.println("val 2:" + pick);
+		        if((pick != tracks.get(i)))
+		            pick = tracks.get(i);
+		    }
+		    newItems.add(pick);
+		}
+        
+		
+
+		return newItems;
+	}
 
 	public static void main(String[] args) throws IOException, ParseException {
 		
 		
-		ObjectMapper mapper = new ObjectMapper();
-		//mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		List<Double> list = new ArrayList<Double>();
+		List<Double> result = new ArrayList<Double>();
 
+		double arr[] = { 4, 20, 20,20, 16, 30, 30, 30, 30, 20, 12};
 
-		List<Tra> myObjects = mapper.readValue(Paths.get("hh.json").toFile(), mapper.getTypeFactory().constructCollectionType(List.class, Tra.class));
-		
-		
-	
-	
-	
-
-    
-		for(Tra i : myObjects) {
-			System.out.println(i.getVolume());
-			System.out.println(i.getDate());
+		for(double i: arr) {
+			
+			list.add(i);
 		}
-
+		
+		result = filter(list);
+		
+		for(double i: result) {
+			System.out.print(i + " \t ");
+		}
+		
+		
+		
+		
+		
+	
 	}
 
 }

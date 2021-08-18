@@ -44,9 +44,7 @@ public class test {
 			double randomOfTwoInts = new Random().nextBoolean() ? randomNum : randomNum2;
 
 			
-			Track t = new Track(randomOfTwoInts, randomOfTwoInts);
-			
-			rande.add(t);
+
 		}
 		
 		
@@ -88,7 +86,7 @@ public class test {
         // sleep for 5 seconds
         TimeUnit.SECONDS.sleep(5);
  
-        /* … The code being measured ends … */
+        /* ï¿½ The code being measured ends ï¿½ */
  
         long endTime = System.nanoTime();
  
