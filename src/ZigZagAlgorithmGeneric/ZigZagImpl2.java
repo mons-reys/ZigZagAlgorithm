@@ -27,6 +27,7 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 		
 		List<Track> extremums = new ArrayList<Track>();
 		List<Track> FiltredExtremums = new ArrayList<Track>();
+		List<Track> FiltredAnomalies = new ArrayList<Track>();
 		
 		
 		List<Track> anomalies = new ArrayList<Track>();
@@ -51,7 +52,7 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 		for(int i = 1; i < this.size - 1; i++) {
 			boolean v =(this.isAnomaly(tracks.get(0), tracks.get(1), tracks.get(2), (long) 300, percentage));
 
-			if(!(i+2 < size - 1) && ! this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), (long) 1, percentage) ) {
+			//if(!(i+2 < size - 1) || ! this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), (long) 1, percentage) ) {
 				//check if true extremum
 			double val = (double) tracks.get(i).getVolume();
 			
@@ -87,7 +88,7 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 			
 				
 				
-			}else {
+			/*}else {
 			
 				//detect the anomly 
 				if(this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), (long) 360, percentage)) {
@@ -104,7 +105,7 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 					 i += 1;
 			}
 			
-			}
+			}*/
 		
 	}
 		
@@ -123,9 +124,12 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 		//filter the extremums
 		FiltredExtremums = this.filter(extremums);
 		
+		//anomalies filter 
+		//FiltredAnomalies = this.anomalyFilter(FiltredExtremums, (long)480, percentage);
+		
 	
 		
-		return 		FiltredExtremums;
+		return  FiltredExtremums;
 	}
 
 	
@@ -239,7 +243,7 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 		
 		
 
-		System.out.println("diff: " + differenceInMinutes);
+		//System.out.println("diff: " + differenceInMinutes);
 
         // Calucalte time difference
         // in milliseconds
@@ -274,8 +278,55 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 			}
 		}
 		
-		
 		return false;
+		
+	}
+	
+	public List<Track> anomalyFilter(List<Track> tracks, Long differenceOfMinutes, double percentage) throws ParseException {
+		
+		List<Track> result = new ArrayList<Track>();
+		
+		
+		/*for(Track i : result) {
+		System.out.println("Track: " +  " volume : " + i.getVolume()  + " date : " + i.getTime() + " --- type:  ---" + i.getType());
+	}*/
+
+
+		for(int i = 0; i < tracks.size() - 2; i++ ) {
+			boolean b = this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), differenceOfMinutes, percentage);
+			if(!b) {
+				result.add(tracks.get(i));
+				System.out.println("added: " + tracks.get(i).getVolume());
+
+			}else {
+				System.out.println("skipped : " + " tarck: " + tracks.get(i + 1) + " tarck: " +  tracks.get(i + 2));
+				tracks.remove(i+1);
+			}
+			
+		}
+		
+		
+		//check the last point
+		boolean b2 = this.isAnomaly(tracks.get(tracks.size() - 3), tracks.get(tracks.size() - 2), tracks.get(tracks.size() - 1), differenceOfMinutes, percentage);
+
+		if(!b2) {
+			result.add(tracks.get(tracks.size() - 2));
+			//System.out.println("added: " + result.get((tracks.size() - 3)).getVolume());
+
+		}else {
+			System.out.println("skipped : " + " tarck: " + result.get(result.size() - 3) + " tarck: " +  result.get(result.size() - 2));
+			result.remove(result.size() - 2);
+		}
+		
+		System.out.println(tracks.get(result.size() - 1));
+		result.add(tracks.get(result.size() - 1));
+		
+
+		/*for(Track i : result) {
+		System.out.println("Track: " +  " volume : " + i.getVolume()  + " date : " + i.getTime() + " --- type:  ---" + i.getType());
+	}*/
+		
+		return result; 
 		
 	}
 
@@ -286,20 +337,45 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 	@Override
 	public double calculateVolume(List<Track> tracks) {
 		//index of the first min
-		int firstMinIndex;
+		int firstMinIndex = 0;
+		int lastMaxIndex = tracks.size() - 1;
+		
 		
 		
 		double vol = tracks.get(0).getVolume() - tracks.get(tracks.size() - 1).getVolume();
 		
-		if(tracks.get(0).getType() == TrackType.min) {
+		/*if(tracks.get(0).getType() == TrackType.min) {
 			if(tracks.get(1).getType()== tracks.get(0).getType()) firstMinIndex = 1;
 			else firstMinIndex = 2;
-		}else firstMinIndex = 0;
-			
-			
+		}else firstMinIndex = 0;*/
 		
 		
-		for(int i = firstMinIndex; i < tracks.size() - 1; i+=2) {
+		//find the first index 
+		//in case of max max we change the first max to min and start from 0
+		if(tracks.get(0).getType() == TrackType.max && tracks.get(1).getType() == TrackType.max) {
+			tracks.get(0).setType(TrackType.min);
+			firstMinIndex = 0;
+			
+		}else if(tracks.get(0).getType() == TrackType.min && tracks.get(1).getType() == TrackType.max) {
+			firstMinIndex = 0;
+		}else {
+			firstMinIndex = 1;
+		}
+		
+		//find the last index 
+		if(tracks.get(lastMaxIndex).getType() == TrackType.min) lastMaxIndex = tracks.size() - 2;
+			
+			
+		System.out.print("firstMinIndex: " + firstMinIndex + " : " + tracks.get(firstMinIndex).getVolume());
+		System.out.println("");
+		System.out.print("lastMaxIndex: " + lastMaxIndex + " : " + tracks.get(lastMaxIndex).getVolume());
+		System.out.println("");
+		for(Track i : tracks) {
+			System.out.print("type : " + i.getType() + " volume : " + i.getVolume() + "\n");
+
+		}
+		
+		for(int i = firstMinIndex; i < lastMaxIndex ; i+=2) {
 			vol += Math.abs(tracks.get(i).getVolume() - tracks.get(i + 1).getVolume());
 		}
 		
