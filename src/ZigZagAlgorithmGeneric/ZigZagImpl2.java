@@ -23,7 +23,7 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 
 
 
-	public List<Track> extremumsFinder(double percentage) throws ParseException {
+	public List<Track> extremumsFinder(double percentage, double anomliesDifferenceOfMinutes) throws ParseException {
 		
 		List<Track> extremums = new ArrayList<Track>();
 		List<Track> FiltredExtremums = new ArrayList<Track>();
@@ -50,7 +50,7 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 		
 		//check the points 
 		for(int i = 1; i < this.size - 1; i++) {
-			boolean v =(this.isAnomaly(tracks.get(0), tracks.get(1), tracks.get(2), (long) 300, percentage));
+			boolean v =(this.isAnomaly(tracks.get(0), tracks.get(1), tracks.get(2), anomliesDifferenceOfMinutes, percentage));
 
 			//if(!(i+2 < size - 1) || ! this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), (long) 1, percentage) ) {
 				//check if true extremum
@@ -125,11 +125,11 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 		FiltredExtremums = this.filter(extremums);
 		
 		//anomalies filter 
-		//FiltredAnomalies = this.anomalyFilter(FiltredExtremums, (long)480, percentage);
+		FiltredAnomalies = this.anomaliesFilter(FiltredExtremums, anomliesDifferenceOfMinutes, percentage);
 		
 	
 		
-		return  FiltredExtremums;
+		return  FiltredAnomalies;
 	}
 
 	
@@ -231,7 +231,7 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 	 * if it's the case we return an anomaly
 	 * */
 	
-	public boolean isAnomaly(Track current, Track next1, Track next2, Long differenceOfMinutes, double percentage) throws ParseException {
+	public boolean isAnomaly(Track current, Track next1, Track next2, double anomliesDifferenceOfMinutes, double percentage) throws ParseException {
 		//-------calculate the time between two tracks--------
 		
 		 // SimpleDateFormat converts the
@@ -262,7 +262,7 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
   
 		//-------calculate the time between two tracks--------
 
-		if(differenceInMinutes < differenceOfMinutes) {
+		if(differenceInMinutes < anomliesDifferenceOfMinutes) {
 			
 			//diff between current and next2 must be samll than the percentage we give in the param
 			boolean percentageBetweenPreviousAndNext = this.isTrueExtremum(current.getVolume(), next2.getVolume(), percentage);
@@ -282,19 +282,17 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 		
 	}
 	
-	public List<Track> anomalyFilter(List<Track> tracks, Long differenceOfMinutes, double percentage) throws ParseException {
+	
+	public  List<Track> anomaliesFilter(List<Track> tracks, double anomliesDifferenceOfMinutes, double percentage) throws ParseException {
 		
 		List<Track> result = new ArrayList<Track>();
-		
-		
-		/*for(Track i : result) {
-		System.out.println("Track: " +  " volume : " + i.getVolume()  + " date : " + i.getTime() + " --- type:  ---" + i.getType());
-	}*/
 
-
+		
 		for(int i = 0; i < tracks.size() - 2; i++ ) {
-			boolean b = this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), differenceOfMinutes, percentage);
-			if(!b) {
+			
+			boolean isAnomaly = this.isAnomaly(tracks.get(i), tracks.get(i + 1), tracks.get(i + 2), anomliesDifferenceOfMinutes, 0.70);
+			
+			if(!isAnomaly) {
 				result.add(tracks.get(i));
 				System.out.println("added: " + tracks.get(i).getVolume());
 
@@ -307,29 +305,27 @@ public class ZigZagImpl2 implements IZigzag2<Track>{
 		
 		
 		//check the last point
-		boolean b2 = this.isAnomaly(tracks.get(tracks.size() - 3), tracks.get(tracks.size() - 2), tracks.get(tracks.size() - 1), differenceOfMinutes, percentage);
+		boolean isAnomaly = this.isAnomaly(tracks.get(tracks.size() - 3), tracks.get(tracks.size() - 2), tracks.get(tracks.size() - 1), anomliesDifferenceOfMinutes, 0.70);
 
-		if(!b2) {
+		if(!isAnomaly) {
 			result.add(tracks.get(tracks.size() - 2));
-			//System.out.println("added: " + result.get((tracks.size() - 3)).getVolume());
+			System.out.println("added: " + tracks.get((tracks.size() - 3)).getVolume());
 
 		}else {
-			System.out.println("skipped : " + " tarck: " + result.get(result.size() - 3) + " tarck: " +  result.get(result.size() - 2));
-			result.remove(result.size() - 2);
+			System.out.println("skipped : " + " tarck: " + tracks.get(tracks.size() - 3) + " tarck: " +  tracks.get(tracks.size() - 2));
+			tracks.remove(tracks.size() - 2);
 		}
+		result.add(tracks.get(tracks.size() - 1));
 		
-		System.out.println(tracks.get(result.size() - 1));
-		result.add(tracks.get(result.size() - 1));
-		
-
-		/*for(Track i : result) {
-		System.out.println("Track: " +  " volume : " + i.getVolume()  + " date : " + i.getTime() + " --- type:  ---" + i.getType());
-	}*/
-		
-		return result; 
+		return result;
 		
 	}
-
+	
+	
+	
+	
+	
+	
 	
 	
 	

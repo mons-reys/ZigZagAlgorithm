@@ -23,10 +23,50 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class test3 {
 	
+	
+	
+	public static List<Track> anomaly(List<Track> result) throws ParseException {
+		
+		List<Track> result2 = new ArrayList<Track>();
+
+		ZigZagImpl2 algo = new ZigZagImpl2(result);
+		
+		for(int i = 0; i < result.size() - 2; i++ ) {
+			boolean b = algo.isAnomaly(result.get(i), result.get(i + 1), result.get(i + 2), (long) 4320, 0.70);
+			if(!b) {
+				result2.add(result.get(i));
+				System.out.println("added: " + result.get(i).getVolume());
+
+			}else {
+				System.out.println("skipped : " + " tarck: " + result.get(i + 1) + " tarck: " +  result.get(i + 2));
+				result.remove(i+1);
+			}
+			
+		}
+		
+		
+		//check the last point
+		boolean b2 = algo.isAnomaly(result.get(result.size() - 3), result.get(result.size() - 2), result.get(result.size() - 1), (long) 480, 0.70);
+
+		if(!b2) {
+			result2.add(result.get(result.size() - 2));
+			System.out.println("added: " + result.get((result.size() - 3)).getVolume());
+
+		}else {
+			System.out.println("skipped : " + " tarck: " + result.get(result.size() - 3) + " tarck: " +  result.get(result.size() - 2));
+			result.remove(result.size() - 2);
+		}
+		result2.add(result.get(result.size() - 1));
+		
+		return result2;
+		
+	}
+	
 	public static void main(String[] args) throws IOException, ParseException {
 		List<Track> result = new ArrayList<Track>();
 		List<Track> result2 = new ArrayList<Track>();
 		List<Track> result3 = new ArrayList<Track>();
+		List<Track> result4 = new ArrayList<Track>();
 
 		List<Track> test = new ArrayList<Track>();
 
@@ -73,7 +113,7 @@ public class test3 {
 		
 		
 		
-		result = algo.extremumsFinder(0.70);
+		result = algo.extremumsFinder(0.70, 4320);
 		
 		System.out.println(" ----------------- zigzag filtred data : -----------------------");
 
@@ -104,7 +144,7 @@ public class test3 {
 		
 		
 		
-		for(int i = 0; i < result.size() - 2; i++ ) {
+		/*for(int i = 0; i < result.size() - 2; i++ ) {
 			boolean b = algo.isAnomaly(result.get(i), result.get(i + 1), result.get(i + 2), (long) 4320, 0.70);
 			if(!b) {
 				result2.add(result.get(i));
@@ -131,13 +171,21 @@ public class test3 {
 		}
 		result2.add(result.get(result.size() - 1));
 		
-		System.out.println("last value :" + result.get(result.size() - 1).getVolume());
+		System.out.println("last value :" + result.get(result.size() - 1).getVolume());*/
 
-		
+		//result2 = algo.anomaliesFilter(result, );
 
-		for(Track i : result2) {
+		/*for(Track i : result2) {
 		System.out.println("Track: " +  " volume : " + i.getVolume()  + " date : " + i.getTime() + " --- type:  ---" + i.getType());
-	}
+	}*/
+		
+		
+		//result4= algo.anomalyFilter(result, (long) 480, 70);
+		
+		/*for(Track i : result4) {
+		System.out.println("Track: " +  " volume : " + i.getVolume()  + " date : " + i.getTime() + " --- type:  ---" + i.getType());
+	}*/
+		
 		
 		
 		
@@ -148,8 +196,6 @@ public class test3 {
         mapper.writeValue(new File("r.json"), result2);
        // mapper.writeValue(new File("book.json"), test);
 
-		
-		
 		
 
 	}

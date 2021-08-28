@@ -10,10 +10,10 @@ public interface IZigzag2<T> {
 
 	public boolean isTrueExtremum(double previous, double current , double percentage);
 	
-	public List<T> extremumsFinder(double percentage) throws ParseException;
+	public List<T> extremumsFinder(double percentage, double anomliesDifferenceOfMinutes) throws ParseException;
 	
 	
-	public boolean isAnomaly(Track previous, Track current, Track next, Long differenceOfMinutes, double percentage) throws ParseException;	
+	public boolean isAnomaly(Track previous, Track current, Track next, double anomliesDifferenceOfMinutes, double percentage) throws ParseException;	
 	
 	public double  calculateVolume(List<T> tracks);
 	public List<Track> filter(List<Track> tracks);
