@@ -1,11 +1,6 @@
 
 # ZigzagAlgorithm: internship project
 
-
-## Tools 
-Spring boot, Angular, MongoDB, Axon, Git
-
-
 ### description : 
 Design and development project of an algorithm
 calculation of gasoline consumed from the trackings of
@@ -35,8 +30,8 @@ in the company's web application.
 
 
 
-
-
+## Tools 
+Spring boot, Angular, MongoDB, Axon, Git
 
 
 ## BY Zakaria elmhalli 
