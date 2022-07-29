@@ -2,17 +2,17 @@
 # ZigzagAlgorithm: internship project
 
 ### description : 
-Design and development project of an algorithm
-calculation of gasoline consumed from the trackings of
-each vehicle.
+JP&CO company interested on tracking vehicles using a special devices, these ones are injected on the vehicles, and after a periode of time they send the vehicles's informtion in hash called tracking, the tracking contains the state of the car at a particulare time.
+they wanted to calculate the real value of the fuel consumed between two periode of times based on these tracking, the problem is they doesn't now when the driver add more fuel to the vehicle also some times the device send a false data which can be caused by natural movement of the vehicle.
 
 ### Tasks:
 
-* Design of the algorithm
+* build an algorithm that handle all these scenarios and calculate the right value.
 * Detection of consumer trends and
 gasoline supplies.
 * Development and integration of the algorithm
 in the company's web application.
+* show the calculated values on the front-end
 
 ### input: 
 ![1](https://user-images.githubusercontent.com/65210638/143913490-3b22cb54-75c3-479f-9d1d-685eb3cc3f8c.jpg)
